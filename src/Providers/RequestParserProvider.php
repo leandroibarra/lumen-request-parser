@@ -3,7 +3,7 @@
 namespace LumenRequestParser\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use LumenApiQueryParser\RequestParser;
+use LumenRequestParser\RequestParser;
 use LumenRequestParser\Interfaces\RequestParserInterface;
 
 class RequestParserProvider extends ServiceProvider
