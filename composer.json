@@ -1,5 +1,6 @@
 {
     "name": "leandroibarra/lumen-request-parser",
+    "version": "0.0.1",
     "description": "A request parser for REST-APIs based on laravel's lumen framework",
     "type": "library",
     "authors": [
