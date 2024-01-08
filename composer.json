@@ -1,0 +1,27 @@
+{
+    "name": "leandroibarra/lumen-request-parser",
+    "description": "A request parser for REST-APIs based on laravel's lumen framework",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Leandro Ibarra",
+            "email": "lea14_9@hotmail.com"
+        }
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "LumenRequestParser\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^8.1",
+        "laravel/lumen-framework": "^10.0"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.9.1",
+        "mockery/mockery": "^1.4.4",
+        "phpunit/phpunit": "^10.0"
+    }
+}
