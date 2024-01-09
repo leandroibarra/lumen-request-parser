@@ -1,7 +1,7 @@
 # Lumen request parser
 
 ## Description
-A request query parameter parser for REST-APIs based on [https://github.com/ngabor84/lumen-api-query-parser](lumen-api-query-parser) and for Laravel's Lumen framework.
+A request query parameter parser for REST-APIs based on [ngabor84/lumen-api-query-parser](https://github.com/ngabor84/lumen-api-query-parser) and for Laravel's Lumen framework.
 
 ## Requirements
 - PHP >=8.1
