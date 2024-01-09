@@ -6,6 +6,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use LumenRequestParser\Parameters\Filter;
 use LumenRequestParser\Parameters\Sort;
+use LumenRequestParser\Parameters\Parameter;
 use LumenRequestParser\Interfaces\RequestInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -47,6 +48,12 @@ trait RequestBuilderApplierTrait
             );
         } else {
             $paginator = $query->paginate($query->count(), ['*'], 'page', 1);
+        }
+
+        if ($params->hasParameters()) {
+            foreach ($params->getParameters() as $parameter) {
+                $paginator = $this->appendsParameter($paginator, $parameter);
+            }
         }
 
         return $paginator;
@@ -110,8 +117,13 @@ trait RequestBuilderApplierTrait
         }
     }
 
-    protected function applySort(Builder $query, Sort $sort)
+    protected function applySort(Builder $query, Sort $sort): void
     {
         $query->orderBy($sort->getField(), $sort->getDirection());
+    }
+
+    protected function appendsParameter(LengthAwarePaginator $paginator, Parameter $parameter): LengthAwarePaginator
+    {
+        return $paginator->appends($parameter->getField(), urldecode($parameter->getValue()));
     }
 }

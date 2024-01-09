@@ -9,10 +9,13 @@ use LumenRequestParser\Interfaces\RequestParserInterface;
 // ResourceQueryParserTrait
 trait RequestParserTrait
 {
-    protected function parseQueryParams(Request $request, string $defaultSort, int $defaultLimit, int $defaultPage): RequestInterface
+    protected function parseQueryParams(Request $request, array $options = []): RequestInterface
     {
         $parser = app(RequestParserInterface::class);
 
-        return $parser->parse($request, $defaultSort, $defaultLimit, $defaultPage);
+        $defaultSort = isset($options['sort']) ? $options['sort'] : 'id';
+        $defaultLimit = isset($options['limit']) ? (int) $options['limit'] : 10;
+
+        return $parser->parse($request, $defaultSort, $defaultLimit);
     }
 }

@@ -7,6 +7,7 @@ use LumenRequestParser\Interfaces\RequestParserInterface;
 use LumenRequestParser\Interfaces\RequestInterface;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use LumenRequestParser\Parameters\Filter;
+use LumenRequestParser\Parameters\Parameter;
 use LumenRequestParser\Parameters\Pagination;
 use LumenRequestParser\Parameters\Connection;
 use LumenRequestParser\Parameters\Sort;
@@ -22,11 +23,11 @@ class RequestParser implements RequestParserInterface
         $this->requestParams = new RequestParameters();
     }
 
-    public function parse(Request $request, string $defaultSort, int $defaultLimit, int $defaultPage): RequestInterface
+    public function parse(Request $request, string $defaultSort, int $defaultLimit): RequestInterface
     {
         $this->parseFilters($request);
-        $this->parseSort($request, $defaultSort ?: 'id');
-        $this->parsePagination($request, $defaultLimit ?: 10, $defaultPage ?: 1);
+        $this->parseSort($request, $defaultSort);
+        $this->parsePagination($request, $defaultLimit);
         $this->parseConnections($request);
 
         return $this->requestParams;
@@ -34,10 +35,8 @@ class RequestParser implements RequestParserInterface
 
     protected function parseFilters(Request $request): void
     {
-        $filters = $request->has('filter') ? $request->get('filter') : '';
-
-        if ($filters) {
-            foreach (explode(',', $filters) as $filter) {
+        if ($request->has('filter')) {
+            foreach (explode(',', $request->get('filter')) as $filter) {
                 $filterDatas = explode(':', $filter, 3);
 
                 if (count($filterDatas) < 3) {
@@ -47,6 +46,8 @@ class RequestParser implements RequestParserInterface
 
                 $this->requestParams->addFilter(new Filter($field, $operator, $value));
             }
+
+            $this->requestParams->addParameter(new Parameter('filter', $request->get('filter')));
         }
     }
 
@@ -65,13 +66,27 @@ class RequestParser implements RequestParserInterface
 
                 $this->requestParams->addSort(new Sort($field, $direction));
             }
+
+            if ($request->has('sort')) {
+                $this->requestParams->addParameter(new Parameter('sort', $request->get('sort')));
+            }
         }
     }
 
-    protected function parsePagination(Request $request, int $defaultLimit, int $defaultPage): void
+    protected function parsePagination(Request $request, int $defaultLimit): void
     {
-        $limit = (int) ($request->has('limit') ? $request->get('limit') : $defaultLimit);
-        $page = (int) ($request->has('page') ? $request->get('page') : $defaultPage);
+        $limit = (int) $defaultLimit;
+        $page = 1;
+
+        if ($request->has('limit')) {
+            $limit = (int) $request->get('limit');
+            $this->requestParams->addParameter(new Parameter('limit', $limit));
+        }
+
+        if ($request->has('page')) {
+            $page = (int) $request->get('page');
+            $this->requestParams->addParameter(new Parameter('page', $page));
+        }
 
         $this->requestParams->addPagination(new Pagination($limit, $page));
     }
