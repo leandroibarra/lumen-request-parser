@@ -13,7 +13,6 @@
     namespace App\Api\V1\Http\Controllers;
     
     use App\Api\V1\Models\User;
-    use App\Api\V1\Transformers\UserTransformer;
 
     use LumenRequestParser\Traits\RequestParserTrait;
     use LumenRequestParser\Traits\RequestBuilderApplierTrait;
@@ -28,8 +27,8 @@
             $params = $this->parseQueryParams($request);
             $query = User::query();
             $userPaginator = $this->applyParams($query, $params);
-            
-            $this->response->paginator($userPaginator, new UserTransformer, ['key' => 'users']);
+
+            return response()->json($userPaginator);
         }
     }
 ```

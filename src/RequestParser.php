@@ -22,11 +22,11 @@ class RequestParser implements RequestParserInterface
         $this->requestParams = new RequestParameters();
     }
 
-    public function parse(Request $request): RequestInterface
+    public function parse(Request $request, string $defaultSort, int $defaultLimit, int $defaultPage): RequestInterface
     {
         $this->parseFilters($request);
-        $this->parseSort($request);
-        $this->parsePagination($request);
+        $this->parseSort($request, $defaultSort ?: 'id');
+        $this->parsePagination($request, $defaultLimit ?: 10, $defaultPage ?: 1);
         $this->parseConnections($request);
 
         return $this->requestParams;
@@ -34,44 +34,46 @@ class RequestParser implements RequestParserInterface
 
     protected function parseFilters(Request $request): void
     {
-        $filters = $request->has('filter') ? $request->get('filter') : [];
+        $filters = $request->has('filter') ? $request->get('filter') : '';
 
-        foreach (explode(',', $filters) as $filter) {
-            $filterDatas = explode(':', $filter, 3);
+        if ($filters) {
+            foreach (explode(',', $filters) as $filter) {
+                $filterDatas = explode(':', $filter, 3);
 
-            if (count($filterDatas) < 3) {
-                throw new UnprocessableEntityHttpException('Filter must contains field and value!');
+                if (count($filterDatas) < 3) {
+                    throw new UnprocessableEntityHttpException('Filter must contains field, operator, and value!');
+                }
+                [$field, $operator, $value] = $filterDatas;
+
+                $this->requestParams->addFilter(new Filter($field, $operator, $value));
             }
-            [$field, $operator, $value] = $filterDatas;
-
-            $this->requestParams->addFilter(new Filter($field, $operator, $value));
         }
     }
 
-    protected function parseSort(Request $request): void
+    protected function parseSort(Request $request, string $defaultSort): void
     {
-        $sorts = $request->has('sort') ? $request->get('sort') : [];
+        $sorts = $request->has('sort') ? $request->get('sort') : $defaultSort;
 
-        foreach (explode(',', $sorts) as $sort) {
-            if ($sort === '') {
-                throw new UnprocessableEntityHttpException('Sort must contains field!');
+        if ($sorts) {
+            foreach (explode(',', $sorts) as $sort) {
+                if ($sort === '') {
+                    throw new UnprocessableEntityHttpException('Sort must contains field!');
+                }
+
+                $direction = $sort[0] === '-' ? 'DESC' : 'ASC';
+                $field = in_array($sort[0], ['+', '-']) ? substr($sort, 1) : $sort;
+
+                $this->requestParams->addSort(new Sort($field, $direction));
             }
-
-            $direction = $sort[0] === '-' ? 'DESC' : 'ASC';
-            $field = in_array($sort[0], ['+', '-']) ? substr($sort, 1) : $sort;
-
-            $this->requestParams->addSort(new Sort($field, $direction));
         }
     }
 
-    protected function parsePagination(Request $request): void
+    protected function parsePagination(Request $request, int $defaultLimit, int $defaultPage): void
     {
-        if ($request->has('limit')) {
-            $limit = (int) ($request->get('limit') ? $request->get('limit') : 10);
-            $page = (int) ($request->has('page') ? $request->get('page') : 1);
+        $limit = (int) ($request->has('limit') ? $request->get('limit') : $defaultLimit);
+        $page = (int) ($request->has('page') ? $request->get('page') : $defaultPage);
 
-            $this->requestParams->addPagination(new Pagination($limit, $page));
-        }
+        $this->requestParams->addPagination(new Pagination($limit, $page));
     }
 
     protected function parseConnections($request): void
