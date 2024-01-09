@@ -37,12 +37,29 @@ A request query parameter parser for REST-APIs based on [ngabor84/lumen-api-quer
                 
         public function index(Request $request)
         {
+            /**
+             * I suggest to make a first level request validation. For example:
+             * $this->validate($request, [
+             *      'page' => 'nullable|integer|min:1',
+             *      'limit' => 'nullable|integer|min:1|max:100',
+             *      'filter' => [
+             *          'nullable',
+             *              'regex:/^([a-zA-Z]+:(ct|nct|sw|ew|eq|ne|gt|ge|lt|le|in|nin)+:[^,]+,)*([a-zA-Z]+:(ct|nct|sw|ew|eq|ne|gt|ge|lt|le|in|nin)+:[^,]+)$/i',
+             *      ],
+             *      'sort' => [
+             *          'nullable',
+             *          'regex:/^([-+]?[a-zA-Z]+(,[-+]?[a-zA-Z]+)*)?$/i'
+             *      ]
+             * ]);
+             */
+
             $params = $this->parseQueryParams($request);
             /**
-             * Or even you can set sort or limit options. for example:
+             * Or even you can set sorting or page size (limit) options. For example:
              * $options = ['sort' => 'email', 'limit' => 50];
              * $params = $this->parseQueryParams($request, $options);
              */
+
             $query = User::query();
             $userPaginator = $this->applyParams($query, $params);
 

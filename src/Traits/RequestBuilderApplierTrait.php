@@ -60,48 +60,48 @@ trait RequestBuilderApplierTrait
         $method = 'where';
         $clauseOperator = null;
 
-        switch ($operator) {
-            case 'ct':
-                $value = '%' . $value . '%';
-                $clauseOperator = 'LIKE';
-                break;
-            case 'nct':
-                $value = '%' . $value . '%';
-                $clauseOperator = 'NOT LIKE';
-                break;
-            case 'sw':
-                $value .= '%';
-                $clauseOperator = 'LIKE';
-                break;
-            case 'ew':
-                $value = '%' . $value;
-                $clauseOperator = 'LIKE';
-                break;
-            case 'eq':
-                $clauseOperator = '=';
-                break;
-            case 'ne':
-                $clauseOperator = '!=';
-                break;
-            case 'gt':
-                $clauseOperator = '>';
-                break;
-            case 'ge':
-                $clauseOperator = '>=';
-                break;
-            case 'lt':
-                $clauseOperator = '<';
-                break;
-            case 'le':
-                $clauseOperator = '<=';
-                break;
-            default:
-                throw new BadRequestHttpException(sprintf('Not allowed operator: %s', $operator));
-        }
-
         if ($operator === 'in') {
-            $query->whereIn($filter, explode('|', $value));
+            $query->whereIn($filter->getField(), explode('|', $value));
         } else {
+            switch ($operator) {
+                case 'ct':
+                    $value = '%' . $value . '%';
+                    $clauseOperator = 'LIKE';
+                    break;
+                case 'nct':
+                    $value = '%' . $value . '%';
+                    $clauseOperator = 'NOT LIKE';
+                    break;
+                case 'sw':
+                    $value .= '%';
+                    $clauseOperator = 'LIKE';
+                    break;
+                case 'ew':
+                    $value = '%' . $value;
+                    $clauseOperator = 'LIKE';
+                    break;
+                case 'eq':
+                    $clauseOperator = '=';
+                    break;
+                case 'ne':
+                    $clauseOperator = '!=';
+                    break;
+                case 'gt':
+                    $clauseOperator = '>';
+                    break;
+                case 'ge':
+                    $clauseOperator = '>=';
+                    break;
+                case 'lt':
+                    $clauseOperator = '<';
+                    break;
+                case 'le':
+                    $clauseOperator = '<=';
+                    break;
+                default:
+                    throw new BadRequestHttpException(sprintf('Not allowed operator: %s', $operator));
+            }
+
             call_user_func_array(
                 [$query, $method],
                 [$field, $clauseOperator, $value]
