@@ -6,8 +6,6 @@ A request query parameter parser for REST-APIs based on [ngabor84/lumen-api-quer
 ## Requirements
 - PHP >=8.1
 - Lumen framework >= 10.0
-- Mockery >= 1.4.4 (dev)
-- PHPUnit >= 10.0 (dev)
 
 ## Installation
 - Add leandroibarra/lumen-request-parser to your composer.json and make composer update, or just execute:
@@ -44,7 +42,7 @@ A request query parameter parser for REST-APIs based on [ngabor84/lumen-api-quer
              *      'limit' => 'nullable|integer|min:1|max:100',
              *      'filter' => [
              *          'nullable',
-             *              'regex:/^([a-zA-Z]+:(ct|nct|sw|ew|eq|ne|gt|ge|lt|le|in|nin)+:[^,]+,)*([a-zA-Z]+:(ct|nct|sw|ew|eq|ne|gt|ge|lt|le|in|nin)+:[^,]+)$/i',
+             *          'regex:/^([a-zA-Z]+:(ct|nct|sw|ew|eq|ne|gt|ge|lt|le|in|nin)+:[^,]+,)*([a-zA-Z]+:(ct|nct|sw|ew|eq|ne|gt|ge|lt|le|in|nin)+:[^,]+)$/i',
              *      ],
              *      'sort' => [
              *          'nullable',
