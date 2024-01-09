@@ -27,14 +27,6 @@ trait RequestBuilderApplierTrait
             }
         }
 
-        if ($params->hasConnection()) {
-            $with = [];
-            foreach ($params->getConnections() as $connection) {
-                $with[] = $connection->getName();
-            }
-            $query->with($with);
-        }
-
         if ($params->hasPagination()) {
             $pagination = $params->getPagination();
             $query->limit($pagination->getLimit());

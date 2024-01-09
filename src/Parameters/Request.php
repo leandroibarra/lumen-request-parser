@@ -6,7 +6,6 @@ use LumenRequestParser\Interfaces\RequestInterface;
 use LumenRequestParser\Interfaces\FilterInterface;
 use LumenRequestParser\Interfaces\SortInterface;
 use LumenRequestParser\Interfaces\PaginationInterface;
-use LumenRequestParser\Interfaces\ConnectionInterface;
 use LumenRequestParser\Interfaces\ParameterInterface;
 
 class Request implements RequestInterface
@@ -14,7 +13,6 @@ class Request implements RequestInterface
     protected $filters = [];
     protected $sorts = [];
     protected $pagination;
-    protected $connections = [];
     protected $parameters = [];
 
     public function addFilter(FilterInterface $filter): void
@@ -60,21 +58,6 @@ class Request implements RequestInterface
     public function getPagination(): PaginationInterface
     {
         return $this->pagination;
-    }
-
-    public function addConnection(ConnectionInterface $connection): void
-    {
-        $this->connections[] = $connection;
-    }
-
-    public function hasConnection(): bool
-    {
-        return (bool) count($this->connections);
-    }
-
-    public function getConnections(): array
-    {
-        return $this->connections;
     }
 
     public function hasParameters(): bool

@@ -9,7 +9,6 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use LumenRequestParser\Parameters\Filter;
 use LumenRequestParser\Parameters\Parameter;
 use LumenRequestParser\Parameters\Pagination;
-use LumenRequestParser\Parameters\Connection;
 use LumenRequestParser\Parameters\Sort;
 use Illuminate\Http\Request;
 
@@ -28,7 +27,6 @@ class RequestParser implements RequestParserInterface
         $this->parseFilters($request);
         $this->parseSort($request, $defaultSort);
         $this->parsePagination($request, $defaultLimit);
-        $this->parseConnections($request);
 
         return $this->requestParams;
     }
@@ -89,14 +87,5 @@ class RequestParser implements RequestParserInterface
         }
 
         $this->requestParams->addPagination(new Pagination($limit, $page));
-    }
-
-    protected function parseConnections($request): void
-    {
-        if ($request->has('connection')) {
-            foreach ($request->get('connection') as $connection) {
-                $this->requestParams->addConnection(new Connection($connection));
-            }
-        }
     }
 }
